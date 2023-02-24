@@ -1,0 +1,78 @@
+import random
+
+COLOURS = ["R", "O", "Y", "G", "B", "W"]
+TRIES = 10
+PATTERN_LENGTH = 4
+
+def generate_pattern():
+    PATTERN = []
+    
+    for _ in range(PATTERN_LENGTH):
+        colour = random.choice(COLOURS)
+        PATTERN.append(colour)
+        
+    return PATTERN
+
+def guess_pattern():
+    guess = input("Guess: ").upper().replace(" ", "")
+    
+    
+    # while True:
+    if len(guess) != PATTERN_LENGTH:
+        print(f"Please enter a valid guess, please guess {PATTERN_LENGTH} colours")
+        guess_pattern()
+    
+        
+    for colour in guess:
+        if colour not in COLOURS:
+            print(f"Invalid color: {colour}, Please use the vaild colours: {COLOURS}")
+            guess_pattern()
+        
+       #if i find myself using a while loop: stop.
+        
+    return guess
+    
+    
+def check_pattern(guess, real_pattern):
+    colour_counts = {}
+    correct_pos = 0
+    incorrect_pos = 0
+    
+    for colour in real_pattern:
+        if colour not in colour_counts:
+            colour_counts[colour] = 0
+        colour_counts[colour] += 1
+        
+        
+    for guess_colour, real_colour in zip(guess, real_pattern):
+        if guess_colour == real_colour:
+            correct_pos += 1
+            colour_counts[guess_colour] -= 1
+            
+    for guess_colour, real_colour in zip(guess, real_pattern):
+        if guess_colour in colour_counts and colour_counts[guess_colour] > 0:
+            incorrect_pos += 1
+            colour_counts[guess_colour] -= 1
+            
+    return correct_pos, incorrect_pos
+
+def game():
+    print(f"Welcome to Mastermind, you have {TRIES} to guess the correct pattern.")
+    print("The valid colours are: ", *COLOURS)
+    
+    pattern = generate_pattern()
+    for attempts in range(1, TRIES + 1):
+        guess = guess_pattern()
+        correct_pos, incorrect_pos = check_pattern(guess, pattern)
+        
+        if correct_pos == PATTERN_LENGTH:
+            print(f"You won in {attempts} guesses")
+            break
+        
+        print(f"Correct Positions: {correct_pos} | Incorrect Positions {incorrect_pos}")
+    
+    else:
+        print(f"You ran out of guesses, the pattern was: ", *pattern)
+        
+if __name__ == "__main__":
+    game()
